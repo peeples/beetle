@@ -43,7 +43,7 @@ def parse_args():
     return args
 
 
-def beetle():
+def beetle(args):
     """
     This is the main thing that beetle does
     """
@@ -96,9 +96,10 @@ def beetle():
     # plot some stuff!
     make_plots(galaxy, outfile_base)
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+def main():
     ## anything that's defined in here is a global variable (!!!)
 
     args = parse_args()
-    beetle()
+    beetle(args)  ## have to pass args into beetle to not break
     sys.exit("~~~*~*~*~*~*~all done!!!! galaxies are fun!")

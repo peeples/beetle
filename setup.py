@@ -15,5 +15,5 @@ setup(
                 'make_plots',
                 'read_in_galaxies',
                 'peeples2014'],  # Python modules to install (without the .py in the filename)
-    scripts=['beetle']  # This is the full name of the script "beetle"; this will be installed to a bin/ directory
+    scripts=['beetle.py']  # This is the full name of the script "beetle"; this will be installed to a bin/ directory
 )
