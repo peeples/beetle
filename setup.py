@@ -3,11 +3,11 @@
 from setuptools import setup
 
 setup(
-    name='chester',
+    name='beetle',
     author='Molly Peeples',
     author_email='molly@stsci.edu',
     version='0.1',
-    py_modules=['chester',
+    py_modules=['beetle',
                 'calculate_rates',
                 'create_galaxies',
                 'constants',
@@ -15,5 +15,5 @@ setup(
                 'make_plots',
                 'read_in_galaxies',
                 'peeples2014'],  # Python modules to install (without the .py in the filename)
-    scripts=['chester']  # This is the full name of the script "chester"; this will be installed to a bin/ directory
+    scripts=['beetle']  # This is the full name of the script "chester"; this will be installed to a bin/ directory
 )
