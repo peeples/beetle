@@ -30,7 +30,8 @@ def create_galaxies(**kwargs):
     const_sfr = kwargs.get("sfr",1.0 *u.Msun / u.yr)
     init_Mstar = kwargs.get("init_Mstar", 3.0e10 * u.Msun)
     print "these are hardcoded and should be passed in"
-    Nstep = int(lifetime / dt) + 1
+    print "lifetime, dt = ", lifetime, dt
+    Nstep = int((lifetime / dt).value) + 1
     const_Mg = init_Mstar
     const_Mh = 1.0e12 * u.Msun
     const_tlogoh = T_LOG_OH_SUN
