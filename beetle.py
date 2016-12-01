@@ -50,9 +50,11 @@ def beetle():
 
     # do we create or read in galaxies?
     if args.mode == "create":
+        print "let's create a galaxy!"
         galaxy = create_galaxies(lifetime=args.lifetime)
         outfile_base = "equilibrium"
     elif args.mode == "read":
+        print "let's read in a galaxy!"
         filename = "sfh/test_sfh_gas_history_from_peter_and_gergo.dat"
         filename = "galaxiesq.pkl"
         index = args.index

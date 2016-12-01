@@ -61,7 +61,7 @@ def plot_rates(galaxy,output_name):
     plt.savefig(output_name+"_rates.png")
     plt.close(fig)
 
-    
+
 
 
 #-----------------------------------------------------------------------------------------------------
@@ -130,6 +130,27 @@ def plot_metal_mass(galaxy,output_name):
     plt.close(fig)
 
 
+#-----------------------------------------------------------------------------------------------------
+
+def plot_metallicity(galaxy,output_name):
+    fig = plt.figure(figsize=(11,8),dpi=300)
+    ax = fig.add_subplot(111)
+    ax.plot(galaxy['age'].to(u.Gyr),galaxy['Zcgm'],color='purple',lw=3,label=r"Z$_{cgm}$")
+    ax.plot(galaxy['age'].to(u.Gyr),galaxy['Zism'],color='blue',lw=3,label=r"Z$_{ism}$")
+    ax.plot(galaxy['age'].to(u.Gyr),galaxy['Zstar'],color='red',lw=3,label=r"Z$_{stars}$")
+
+    # ax.set_yscale('log')
+    plt.xlabel("time [Gyr]",fontsize=16)
+    plt.ylabel(r"metallicity",fontsize=16)
+    plt.ylim(0.005,0.01)
+    lg = plt.legend(loc='best')
+    lg.draw_frame(False)
+    plt.tight_layout()
+
+    plt.savefig(output_name+"_metallicity.png")
+    plt.close(fig)
+
+
 
 #-----------------------------------------------------------------------------------------------------
 
@@ -148,7 +169,7 @@ def plot_etas(galaxy,output_name):
 
     plt.savefig(output_name+"_etas.png")
     plt.close(fig)
-    
+
 
 
 #-----------------------------------------------------------------------------------------------------
@@ -163,4 +184,5 @@ def make_plots(galaxy, output_name):
     # plot_compare_recycle(galaxy, output_name)
     # plot_recycle(galaxy, output_name)
     plot_metal_mass(galaxy, output_name)
+    plot_metallicity(galaxy, output_name)
     plot_etas(galaxy, output_name)
