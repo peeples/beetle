@@ -10,6 +10,7 @@ from constants import *
 ## kefits() from Kewley & Ellison (2008) on a Chabrier IMF
 ## average of all of the coefficients except two lowest ones
 ## as calculated for Peeples et al. (2014)
+## log Moxy/Mgas = a + b*x + c*x^2 + d*x^3, with x=log Mstar 
 KE_a = 27.8612
 KE_b = -7.05649
 KE_c = 0.818368
@@ -29,7 +30,7 @@ def oxylost(x):
     """oxygen lost = oxygen made - oxygen in stars - oxygen in ISM """
     value = np.power(10.0,oxymade(x)) - np.power(10.0,staroxy(x)) - np.power(10.0,ismoxy(x)) - np.power(10.0,dustoxy(x))
     return np.log10(value)
-    
+
 def metalsmade(x):
     return np.log10(np.power(10.0,zii(x)) + np.power(10.0,zia(x)) + np.power(10.0,zagb(x)))
 
@@ -66,7 +67,7 @@ def oxyia(x):
 
 def oxyagb(x):
     m = x - 10.5
-    if(x >= 9.79): 
+    if(x >= 9.79):
         lagb = 6.52532793646306 + m + np.sin(0.558326101347158*m/np.cos(m*m - m) + np.cos(0.707421425956075*m*m/np.cos(0.101415124817729 + -0.558326101347158*m/np.cos(m*m - m)) - m));
         return (-1.0*np.power(10.0,lagb))  ## OXYGEN DESTRUCTION!
     else:
@@ -134,4 +135,3 @@ def fmr(lmstar, lsfr):
     ## takes log stellar mass and log star formation rate and returns 12+log(O/H)
     m = lmstar - 10
     return (8.90 + 0.37*m - 0.14*lsfr - 0.19*m*m + 0.12*m*lsfr - 0.054*lsfr*lsfr)
-

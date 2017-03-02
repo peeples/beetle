@@ -1,6 +1,7 @@
 import numpy as np
 from astropy import units as u
 
+
 HELIUM_CORR = 1.366  # factor by which to correct H masses for existence of He, as used in Peeples et al. (2014)
 
 ## atomic masses

@@ -56,7 +56,7 @@ def beetle():
     elif args.mode == "read":
         print "let's read in a galaxy!"
         filename = "sfh/test_sfh_gas_history_from_peter_and_gergo.dat"
-        filename = "galaxiesq.pkl"
+        # filename = "galaxiesq.pkl"
         index = args.index
         galaxy = read_in_galaxy(filename, index)
         outfile_base = "galaxiesq_"+str(index)

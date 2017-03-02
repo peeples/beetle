@@ -142,7 +142,7 @@ def plot_metallicity(galaxy,output_name):
     # ax.set_yscale('log')
     plt.xlabel("time [Gyr]",fontsize=16)
     plt.ylabel(r"metallicity",fontsize=16)
-    plt.ylim(0.005,0.01)
+    # plt.ylim(0.005,0.01)
     lg = plt.legend(loc='best')
     lg.draw_frame(False)
     plt.tight_layout()
