@@ -3,7 +3,12 @@ from math import pi
 from constants import *
 import peeples2014 as P
 from astropy.cosmology import WMAP9 as cosmo
+from astropy.table import QTable, Table, Column
+from astropy import units as u
 import sys
+
+from calculate_rates import fml, dfmldt
+from create_galaxies import initialize_galaxy
 
 import matplotlib as mpl
 mpl.use('Agg')
@@ -97,12 +102,52 @@ def get_Zg_coeffs(mzr):
     if mzr == "p14":
         return P.KE_a, P.KE_b, P.KE_c, P.KE_d
 
-def calc_zstar(Zg, mstar):
+def make_galaxy():
     ## integrate Zg(mstar)
+    #### take mstar as an array
     ## Zstar = int(Zg, mstar) ?
 
     ## can be done numerically? or analytically?
-    return ""
+
+    ## let's start numerically because I'm lazy
+    sfr = 15.*u.Msun/u.yr # msun per year
+    nsteps = 2000
+    time_start = 2*u.Gyr
+    init_Mstar = 1.e6 * u.Msun
+    dt = (cosmo.age(z=0) - time_start) / nsteps
+    galaxy = initialize_galaxy(nsteps)
+    weight = np.zeros(nsteps) * u.Msun
+    zstar = np.zeros(len(galaxy))
+    Mzstar = np.zeros(len(galaxy)) * u.Msun
+    for i in range(nsteps):
+        galaxy['age'][i] = i * dt
+        galaxy['dt'][i] = dt
+        galaxy['lookback'][i] = (nsteps - i - 1)*dt
+        galaxy['sfr'][i] = sfr
+        if i == 0:
+            galaxy['Ms'][i] = init_Mstar
+        else:
+            galaxy['Ms'][i] = galaxy['Ms'][i-1] + sfr*dt - sfr*(1-fml(galaxy['age'][i]))*dt
+
+        weight[i] = sfr*(1-fml(galaxy['age'][i]))*dt
+        galaxy['tlogoh'][i] = get_tlogoh(np.log10(galaxy['Ms'][i].value), "am13")
+        Zism = (O_AMU / HELIUM_CORR) * np.power(10.0,galaxy['tlogoh'] - 12)
+        galaxy['Zism'] = Zism
+        zstar[i], sum_weight = np.average(galaxy['Zism'],weights=weight,returned=True)
+        Mzstar[i] = np.sum(galaxy['Zism']*weight) ## / np.cumsum(weight)
+
+    ## how many metals made?
+    dMoxyiidt = Y_O_II * galaxy['sfr']
+    Moxymade = np.cumsum(dMoxyiidt * galaxy['dt'])
+    ## Need to account for metals made by stars existing in 0th timestep; assume from eq(2) of peeples14
+    Moxyinit = np.power(10.0,P.oxyii(np.log10(galaxy['Ms'][0].value))) * u.Msun
+    galaxy['Moxymade'] = Moxymade + Moxyinit
+    galaxy['dMoxymadedt'] = dMoxyiidt
+
+    galaxy['Zstar'] = zstar
+    galaxy['Mzstar'] = Mzstar
+
+    return galaxy
 
 def mstar_mhalo(z, mhalo):
     ## Moster+09, eqns 16,17 in PS11
@@ -191,14 +236,52 @@ def ps11():
     # plt.savefig("zetaw_vvir.png")
     plt.close(fig)
 
+def plot_metals_retained(galaxy):
+    fig = plt.figure(figsize=(8,8),dpi=400)
+    # plt.style.use('seaborn-white')
+    ax = fig.add_subplot(111)
+
+    lstars = np.log10(galaxy['Ms'].value)
+    starsz = galaxy['Mzstar']/galaxy['Moxymade']
+    ismz = galaxy['Mzism']/galaxy['Moxymade']
+
+    z = np.zeros( lstars.size ) ###0.0*lstars
+    starbar = ax.fill_between(lstars,z,starsz,facecolor='#d73027',edgecolor='#d73027', zorder=10, label="stars")   # stars, red
+    ismbar = ax.fill_between(lstars,starsz,starsz+ismz,facecolor='#4575b4',edgecolor='#4575b4', zorder=10, label="ISM gas")  ## ISM, blue
+
+    plt.plot([8.,11.5],[1,1], linestyle='dashed', color='black', linewidth=2)
+
+    #lg = ax.legend(loc='best')
+    #lg.draw_frame(False)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    # plt.xlim(8,11.5)
+    plt.xlim(8.5,11.5)
+    # plt.ylim(0,0.05)
+    plt.ylim(0,1.18)
+    plt.xlabel(r'log M$_{\star}$/M$_{\odot}$',fontsize=25)
+    plt.ylabel(r'fraction of available metals, < 150kpc',fontsize=25)
+
+    plt.tight_layout()
+    plt.savefig('metal-census.png')
 
 
+def metals_retained():
+    galaxy = make_galaxy()
+    lMstar = np.log10(galaxy['Ms'].value)
+    Fgyear = "PS11"
+    Fg = get_Fg(lMstar, Fgyear)
+    galaxy['Mg'] = Fg * galaxy['Ms']
+    galaxy['Mzism'] = galaxy['Zism'] * galaxy['Mg']
 
+    ## now plot stuff :-)
+    plot_metals_retained(galaxy)
 
 if __name__ == "__main__":
 # def main():
     ## anything that's defined in here is a global variable (!!!)
 
 #    args = parse_args()
-    ps11()  ## have to pass args into beetle to not break
+    # ps11()  ## have to pass args into beetle to not break
+    metals_retained()
     sys.exit("~~~*~*~*~*~*~all done!!!! galaxies are fun!")

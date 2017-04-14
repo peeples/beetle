@@ -54,11 +54,6 @@ def create_galaxies(**kwargs):
         else:
             # figure out how much recylced material
             # assume that previous stars also recyling at rate of CHI_RECY*const_sfr
-            # Mrecy = 0 * u.Msun / u.yr
-            #for j in range(i):
-            #    # recycle rate = cumulative sum of (mass formed in previous timestep) * (dfml(time elapsed)/dt)
-            #    Mrecy += (const_sfr * dt) * dfmldt(galaxy['age'][i] - galaxy['age'][j])
-            ## Mrecy += const_sfr * fml(galaxy['age'][i])
             galaxy['Ms'][i] = galaxy['Ms'][i-1] + const_sfr*dt - galaxy['dMrdt'][i]*dt
 
         galaxy['Mcgm'][i] = galaxy['Mh'][i]*cosmo.Ob0/cosmo.Om0 - galaxy['Mg'][i] - galaxy['Ms'][i]
