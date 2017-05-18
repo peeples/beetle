@@ -31,6 +31,9 @@ def plot_masses(galaxy,output_name):
     plt.tight_layout()
 
     plt.savefig(output_name+"_masses.png")
+
+    ax.set_yscale('linear')
+    plt.savefig(output_name+"_masses_lin.png")
     plt.close(fig)
 
 
@@ -159,6 +162,8 @@ def plot_etas(galaxy,output_name):
     ax = fig.add_subplot(111)
     ax.plot(galaxy['age'].to(u.Gyr),galaxy['etaa'], color='green', lw=3, label=r'$\eta_{\rm a} = \dot{M}_{\rm acc}$/SFR')
     ax.plot(galaxy['age'].to(u.Gyr),galaxy['etaw'], color='orange', lw=3, label=r'$\eta_{\rm w} = \dot{M}_{\rm wind}$/SFR')
+
+    plt.plot([0,np.max(galaxy['age'].to(u.Gyr).value)],[0,0], linestyle='dotted', color='grey', linewidth=1)
 
     plt.xlabel("time [Gyr]",fontsize=16)
     plt.ylabel(r"$\eta\equiv\dot{\rm M}$/SFR",fontsize=16)

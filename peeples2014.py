@@ -10,7 +10,7 @@ from constants import *
 ## kefits() from Kewley & Ellison (2008) on a Chabrier IMF
 ## average of all of the coefficients except two lowest ones
 ## as calculated for Peeples et al. (2014)
-## log Moxy/Mgas = a + b*x + c*x^2 + d*x^3, with x=log Mstar 
+## log Moxy/Mgas = a + b*x + c*x^2 + d*x^3, with x=log Mstar
 KE_a = 27.8612
 KE_b = -7.05649
 KE_c = 0.818368

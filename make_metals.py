@@ -27,6 +27,7 @@ def make_metals(galaxy, **kwargs):
 
     ## how much oxygen is in the ISM?
     if "tlogoh" not in galaxy.colnames:
+        print "--->you don't have any ISM oxygen! that's OK! I'll make some assuming the FMR!"
         tlogoh = P.fmr(np.log10(np.array(galaxy['Ms'])), np.log10(np.array(galaxy['sfr'])))
         galaxy['tlogoh'] = tlogoh
     Zism = (O_AMU / HELIUM_CORR) * np.power(10.0,galaxy['tlogoh'] - 12)

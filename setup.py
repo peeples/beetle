@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-
 from setuptools import setup
 
 setup(
     name='beetle',
     author='Molly Peeples',
     author_email='molly@stsci.edu',
+    url="https://github.com/peeples/beetle",
     version='0.1',
     py_modules=['beetle',
                 'calculate_rates',
