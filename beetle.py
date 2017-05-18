@@ -62,8 +62,9 @@ def beetle():
         outfile_base = "galaxiesq_"+str(index)
     elif args.mode == "scatter":
         print "let's make some galaxies with scattered SFHs!"
-        galaxy = make_scattered_galaxy()
-        outfile_base = "scattered_"
+        filename = "test_sfh_format.dat"
+        galaxy = make_scattered_galaxy(filename)
+        outfile_base = "scattered"
     elif args.mode == "compile":
         print "I'm going to compile your galaxies!"
         index = args.index  # this is going to be a maximum
