@@ -15,7 +15,8 @@ import numpy as np
 from astropy.cosmology import WMAP9 as cosmo
 
 from constants import *
-
+from popping import infer_gas_parallel as ig
+from create_galaxies import initialize_galaxy
 
 def read_in_galaxy(filename, index):
     print "attempting to read in",filename
@@ -160,21 +161,52 @@ def combine_galaxy_files(gasfile, recyfile, outfile, **kwargs):
     print "I don't know how to output as an ascii file"
 
 
-
-
 #-----------------------------------------------------------------------------------------------------
 
 def make_scattered_galaxy(filename, **kwargs):
     print "attempting to read in ", filename
 
-    galaxy = ascii.read(filename)
-    galaxy.remove_column('i')
-    galaxy.rename_column('SFR', 'sfr')
 
-    galaxy['sfr'] = np.power(10.0,galaxy['sfr'])
+    input_galaxy = ascii.read(filename)
 
-    galaxy['Ms'].unit = u.Msun
-    galaxy['sfr'].unit = u.Msun / u.yr
+    galaxy = initialize_galaxy(len(input_galaxy))
+    dt = 1.e7
+    print "assuming timestep is 1.e7 years!!!!!"
+    galaxy['dt'] += 1.e7*u.yr
 
+    galaxy['sfr'] = np.power(10.0,input_galaxy['SFR']) * u.Msun/u.yr
+    galaxy['dMrdt'] = np.power(10.0,input_galaxy['Mrec'])* u.Msun / galaxy['dt']
+    # galaxy['dMrdt'].unit = u.Msun / u.yr
+
+    ## Need to get gas masses from Gergo's code
+    fake_radius = 3000. + np.zeros(len(galaxy['sfr']))
+    gas = ig.gas_masses(galaxy['sfr'], input_galaxy['Ms'], fake_radius)
+    Mgas, Mhi, Mh2 = gas[0], gas[1], gas[2]
+
+    galaxy['Mg'] = Mgas * HELIUM_CORR * u.Msun
+    galaxy['Mhi'] = Mhi * u.Msun
+    galaxy['Mh2'] = Mh2 * u.Msun
+    galaxy['Ms'] = np.power(10.0,input_galaxy['Ms']) * u.Msun
+
+    col_dummy = Column(name='z',data=input_galaxy['z'])
+    galaxy.add_column(col_dummy)
+
+
+    print "ASSUMING PROBABLY A WRONG COSMOLOGY FYI"
+    age = cosmo.age(galaxy['z'])  ### THIS COSMOLOGY IS WRONG
+    galaxy['age'] = age
+
+    tlb = cosmo.lookback_time(galaxy['z'])
+    galaxy['lookback'] = tlb
+
+    galaxy.remove_column('Mh')
+    galaxy.remove_column('Mcgm')
+    galaxy.remove_column('tlogoh')
+
+
+    ## check to make sure sorted so earlier is earlier
+    galaxy.sort('age')
+
+    print galaxy
 
     return galaxy
