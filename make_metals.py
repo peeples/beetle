@@ -21,7 +21,7 @@ def make_metals(galaxy, **kwargs):
     dMoxyiidt = Y_O_II * galaxy['sfr']
     Moxymade = np.cumsum(dMoxyiidt * galaxy['dt'])
     ## Need to account for metals made by stars existing in 0th timestep; assume from eq(2) of peeples14
-    Moxyinit = np.power(10.0,P.oxyii(np.log10(galaxy['Ms'][0]))) * u.Msun
+    Moxyinit = np.power(10.0,P.oxyii(np.log10(galaxy['Ms'][0].value))) * u.Msun
     galaxy['Moxymade'] = Moxymade + Moxyinit
     galaxy['dMoxymadedt'] = dMoxyiidt
 
@@ -36,7 +36,7 @@ def make_metals(galaxy, **kwargs):
     galaxy['Moxyism'] = Moxyism
 
     ## what is rate at which ISM oxygen mass is changing?
-    dMoxyism = UnivariateSpline(short_age,galaxy['Moxyism'][indices].data/1.e9,k=3)
+    dMoxyism = UnivariateSpline(short_age,galaxy['Moxyism'][indices].value/1.e9,k=3)
     dMoxyismdt_func = dMoxyism.derivative(n=1)
     dMoxyismdt = dMoxyismdt_func(galaxy['age'].value) * u.Msun / u.yr
     galaxy['dMoxyismdt'] = dMoxyismdt
