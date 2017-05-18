@@ -60,6 +60,15 @@ def beetle():
         index = args.index
         galaxy = read_in_galaxy(filename, index)
         outfile_base = "galaxiesq_"+str(index)
+    elif args.mode == "scatter":
+        print "let's make some galaxies with scattered SFHs!"
+        galaxy = make_scattered_galaxy()
+        outfile_base = "scattered_"
+    elif args.mode == "compile":
+        print "I'm going to compile your galaxies!"
+        index = args.index  # this is going to be a maximum
+        galaxy = read_in_galaxy(filename, index)
+        outfile_base = "galaxiesq_"+str(index)
     else:
         print "****I don't know what to do here."
         print "****mode set to", args.mode

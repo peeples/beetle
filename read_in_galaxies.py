@@ -48,7 +48,7 @@ def read_in_galaxy(filename, index):
     ### Helium is not included in the gas masses!!
     galaxy['Mg'] = galaxy['Mg'] * HELIUM_CORR
 
-    ### Let's make a CGM! ### 
+    ### Let's make a CGM! ###
     galaxy['Mcgm'] = galaxy['Mh']*cosmo.Ob0/cosmo.Om0 - galaxy['Ms'] - galaxy['Mg']
 
     age = cosmo.age(galaxy['z'])
@@ -103,7 +103,7 @@ def read_in_galaxies(filename, **kwargs):
     ### Helium is not included in the gas masses!!
     galaxy['Mg'] = galaxy['Mg'] * HELIUM_CORR
 
-    
+
 
 #-----------------------------------------------------------------------------------------------------
 
@@ -114,7 +114,7 @@ def combine_galaxy_files(gasfile, recyfile, outfile, **kwargs):
     Nm = kwargs.get("Nm", 16)
     Niter = kwargs.get("Niter", 1000)
 
-    
+
     #read in data, takes a while because np.genfromtxt is sloooowwwww
     print "reading in ",gasfile
     gasgal = np.genfromtxt(gasfile)
@@ -152,9 +152,29 @@ def combine_galaxy_files(gasfile, recyfile, outfile, **kwargs):
             dMrdt  = recygal[i*len_realizations_recy+Nextra-1:(i+1)*len_realizations_recy-1, j*Nrecyparam+5] # dMrecy/dt
             galaxy = QTable([Mh, Sm, dMh_dt, SFR, dMrdt, Mgas, MHI, MH2], names=('Mh','Ms','dMhdt','sfr','dMrdt','Mg','Mhi','Mh2'))
             galaxies[(i+1)*(j+1)] = galaxy
-    
+
     ## save galaxies as a pickle file!
     pickle.dump(galaxies,open(outfile,"w"))
 
     ## output as an ascii file...
     print "I don't know how to output as an ascii file"
+
+
+
+
+#-----------------------------------------------------------------------------------------------------
+
+def make_scattered_galaxy(filename, **kwargs):
+    print "attempting to read in ", filename
+
+    galaxy = ascii.read(filename)
+    galaxy.remove_column('i')
+    galaxy.rename_column('SFR', 'sfr')
+
+    galaxy['sfr'] = np.power(10.0,galaxy['sfr'])
+
+    galaxy['Ms'].unit = u.Msun
+    galaxy['sfr'].unit = u.Msun / u.yr
+
+
+    return galaxy
