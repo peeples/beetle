@@ -70,6 +70,9 @@ def beetle():
         index = args.index  # this is going to be a maximum
         galaxy = read_in_galaxy(filename, index)
         outfile_base = "galaxiesq_"+str(index)
+    elif args.mode == "plots":
+        print "I'm just going to make some plots!"
+        print "but I don't know how to read in a file!"
     else:
         print "****I don't know what to do here."
         print "****mode set to", args.mode

@@ -70,6 +70,8 @@ def make_metals(galaxy, **kwargs):
         print "no CGM :-( setting Zcgm = 0"
         galaxy['Zcgm'] = 0.0 * galaxy['Zism']
 
+    print "I'm done making metals!!"
+
     return galaxy
 
 

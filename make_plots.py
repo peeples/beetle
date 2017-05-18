@@ -19,7 +19,8 @@ def plot_masses(galaxy,output_name):
     if "Mh2" in galaxy.colnames:
         ax.plot(galaxy['age'].to(u.Gyr),galaxy['Mh2'],color='cyan',lw=3,label=r"H$_2$")
     ax.plot(galaxy['age'].to(u.Gyr),galaxy['Ms'],color='red',lw=3,label=r"stars")
-    ax.plot(galaxy['age'].to(u.Gyr),galaxy['Mh']*cosmo.Ob0/cosmo.Om0,color='black',lw=3,label=r"halo baryons")
+    if "Mh" in galaxy.colnames:
+        ax.plot(galaxy['age'].to(u.Gyr),galaxy['Mh']*cosmo.Ob0/cosmo.Om0,color='black',lw=3,label=r"halo baryons")
     if "Mcgm" in galaxy.colnames:
         ax.plot(galaxy['age'].to(u.Gyr),galaxy['Mcgm'],color='purple',lw=3,label=r"CGM")
 
